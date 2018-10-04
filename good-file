@@ -1,0 +1,16 @@
+START 
+	FOR helloWorld := 0 DO
+		EXECUTE myProcedure
+	ROF ;
+	WHILE continue DO
+		IF valid THEN
+			hello SET 41
+		FI ;
+		DO
+			thisThing SET 17;
+			START
+				EXECUTE thisOtherProcedure
+			STOP
+		WHILE hello OD
+	ELIHW
+STOP
