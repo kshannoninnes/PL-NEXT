@@ -1,0 +1,20 @@
+PROGRAM
+	IMPL::implOne 
+		PROC procTwo; 
+			FUNC funcTwo;
+				START
+					identThree SET 41 + 1;
+					identFour SET 43 - 1
+				STOP;
+			EXECUTE procThree;
+			IF 42 THEN
+				DO
+					FOR forOne := 42 DO
+						answerToLife SET 42;
+						answerToUniverse SET 42;
+						answerToEverything SET 42
+					ROF
+				WHILE 42 OD
+			FI
+	.
+TERMINATE

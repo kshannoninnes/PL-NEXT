@@ -1,4 +1,5 @@
 %error-verbose
+%locations
 
 %{
 #include <stdio.h>
@@ -8,16 +9,120 @@ int yylex();
 int yyerror();
 %}
 
-%token ident number term_op expression_op set_equal
-%token START STOP FOR ROF DO OD WHILE ELIHW IF THEN FI EXECUTE SET SEMICOLON
+%union {
+	char *s;
+}
+
+/* Regular Expression Tokens */
+%token ident number term_op expression_op
+
+ /* General Keywords */
+%token START STOP TO PROGRAM TERMINATE
+
+/* Type Keywords */
+%token TYPE VAR CONST ARR
+
+ /* Control Structure Keywords */
+%token FOR ROF DO OD WHILE ELIHW IF THEN FI
+
+/* Assignments */
+%token FOR_ASSIGN TYPEDEC_ASSIGN SET_ASSIGN IS
+
+/* Function Keywords */
+%token FUNC PROC EXECUTE
+
+/* Unit Keywords */
+%token IMPL DECL DECLARATION END
+
+/* Punctuation */
+%token O_BRACE C_BRACE O_HBRACKET C_HBRACKET O_BRACKET C_BRACKET
+%token PERIOD DOUBLE_COLON COMMA COLON SEMICOLON
+
 %start input
 
 %%
 
 input: 			basic_program { printf("Test success!\n"); }
 
-basic_program: 		statement
-			| basic_program statement
+basic_program: 		PROGRAM declaration_unit implementation_unit TERMINATE
+
+declaration_unit:	DECL DOUBLE_COLON ident DECLARATION END
+			| DECL DOUBLE_COLON ident decl_options DECLARATION END
+
+decl_options:		CONST constant_declaration
+	     		| CONST constant_declaration var_options
+			| CONST constant_declaration type_options
+			| CONST constant_declaration proc_options
+			| CONST constant_declaration function_interface
+
+var_options:		VAR variable_declaration
+	   		| VAR variable_declaration type_options
+			| VAR variable_declaration proc_options
+			| VAR variable_declaration function_interface
+
+type_options:		type_declaration
+	    		| type_declaration proc_options
+			| type_declaration function_interface
+
+proc_options:		procedure_interface
+	    		| procedure_interface function_interface
+
+procedure_interface:	PROC ident
+		   	| PROC ident formal_parameters
+
+function_interface:	FUNC ident
+		  	| FUNC ident formal_parameters
+
+type_declaration:	TYPE ident TYPEDEC_ASSIGN type SEMICOLON
+
+formal_parameters:	O_BRACKET formal_parameter C_BRACKET
+
+formal_parameter:	ident
+			| formal_parameter SEMICOLON ident
+
+constant_declaration:	constant SEMICOLON
+
+constant:		ident IS number
+			| constant COMMA ident IS number
+
+variable_declaration:	variable SEMICOLON
+
+variable:		ident COLON ident
+			| variable COMMA ident COLON ident
+
+type:			basic_type
+    			| array_type
+
+basic_type:		ident
+	  		| enumerated_type
+			| range_type
+
+enumerated_type:	O_BRACE enum_element C_BRACE
+
+enum_element:		ident
+			| enum_element COMMA ident
+
+range_type:		O_HBRACKET range C_HBRACKET
+
+array_type:		ARR ident O_HBRACKET range C_HBRACKET
+
+range:			number TO number
+
+implementation_unit:	IMPL DOUBLE_COLON ident block PERIOD
+
+block:			specification_part implementation_part
+
+specification_part:	CONST constant_declaration
+		  	| VAR variable_declaration
+			| procedure_declaration
+			| function_declaration
+			| ;
+
+procedure_declaration:	PROC ident SEMICOLON block SEMICOLON
+
+function_declaration:	FUNC ident SEMICOLON block SEMICOLON
+
+implementation_part:	statement
 
 statement:		assignment
 			| procedure_call
@@ -27,23 +132,22 @@ statement:		assignment
 			| for_statement 
 			| compound_statement
 
-assignment:		ident SET expression
+assignment:		ident SET_ASSIGN expression
 
 procedure_call:		EXECUTE ident
 
-if_statement:		IF expression THEN statement FI
+if_statement:		IF expression THEN multi_statement FI
 
-while_statement:	WHILE expression DO statement ELIHW
-			| WHILE expression DO statement SEMICOLON statement ELIHW
+while_statement:	WHILE expression DO multi_statement ELIHW
 
-do_statement:		DO statement WHILE expression OD
-			| DO statement SEMICOLON statement WHILE expression OD
+do_statement:		DO multi_statement WHILE expression OD
 
-for_statement:		FOR ident set_equal expression DO statement ROF
-			| FOR ident set_equal expression DO statement SEMICOLON statement ROF
+for_statement:		FOR ident FOR_ASSIGN expression DO multi_statement ROF
 
-compound_statement:	START statement STOP
-			| START statement SEMICOLON statement STOP
+compound_statement:	START multi_statement STOP
+
+multi_statement:	statement
+			| multi_statement SEMICOLON statement
 
 expression:		term
 			| term expression_op term
