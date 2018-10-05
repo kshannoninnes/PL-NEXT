@@ -4,6 +4,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#define YYSTYPE char*
 int yywrap();
 int yylex();
 int yyerror();
@@ -17,7 +18,7 @@ int yyerror();
 %token ident number term_op expression_op
 
  /* General Keywords */
-%token START STOP TO PROGRAM TERMINATE
+%token START STOP TO PROGRAM TERMINATE OF
 
 /* Type Keywords */
 %token TYPE VAR CONST ARR
@@ -26,7 +27,7 @@ int yyerror();
 %token FOR ROF DO OD WHILE ELIHW IF THEN FI
 
 /* Assignments */
-%token FOR_ASSIGN TYPEDEC_ASSIGN SET_ASSIGN IS
+%token FOR_ASSIGN SET_ASSIGN IS
 
 /* Function Keywords */
 %token FUNC PROC EXECUTE
@@ -36,7 +37,7 @@ int yyerror();
 
 /* Punctuation */
 %token O_BRACE C_BRACE O_HBRACKET C_HBRACKET O_BRACKET C_BRACKET
-%token PERIOD DOUBLE_COLON COMMA COLON SEMICOLON
+%token PERIOD COMMA COLON SEMICOLON GREATERTHAN EQUALS
 
 %start input
 
@@ -46,8 +47,8 @@ input: 			basic_program { printf("Test success!\n"); }
 
 basic_program: 		PROGRAM declaration_unit implementation_unit TERMINATE
 
-declaration_unit:	DECL DOUBLE_COLON ident DECLARATION END
-			| DECL DOUBLE_COLON ident decl_options DECLARATION END
+declaration_unit:	DECL COLON COLON ident DECLARATION END
+			| DECL COLON COLON ident decl_options DECLARATION END
 
 decl_options:		CONST constant_declaration
 	     		| CONST constant_declaration var_options
@@ -73,12 +74,12 @@ procedure_interface:	PROC ident
 function_interface:	FUNC ident
 		  	| FUNC ident formal_parameters
 
-type_declaration:	TYPE ident TYPEDEC_ASSIGN type SEMICOLON
+type_declaration:	TYPE ident EQUALS GREATERTHAN type SEMICOLON
 
-formal_parameters:	O_BRACKET formal_parameter C_BRACKET
+formal_parameters:	O_BRACKET multi_parameter C_BRACKET
 
-formal_parameter:	ident
-			| formal_parameter SEMICOLON ident
+multi_parameter:	ident
+			| multi_parameter SEMICOLON ident
 
 constant_declaration:	constant SEMICOLON
 
@@ -104,11 +105,11 @@ enum_element:		ident
 
 range_type:		O_HBRACKET range C_HBRACKET
 
-array_type:		ARR ident O_HBRACKET range C_HBRACKET
+array_type:		ARR ident range_type OF type
 
 range:			number TO number
 
-implementation_unit:	IMPL DOUBLE_COLON ident block PERIOD
+implementation_unit:	IMPL COLON COLON ident block PERIOD
 
 block:			specification_part implementation_part
 
@@ -136,13 +137,13 @@ assignment:		ident SET_ASSIGN expression
 
 procedure_call:		EXECUTE ident
 
-if_statement:		IF expression THEN multi_statement FI
+if_statement:		IF expression THEN statement FI
 
 while_statement:	WHILE expression DO multi_statement ELIHW
 
 do_statement:		DO multi_statement WHILE expression OD
 
-for_statement:		FOR ident FOR_ASSIGN expression DO multi_statement ROF
+for_statement:		FOR ident COLON EQUALS expression DO multi_statement ROF
 
 compound_statement:	START multi_statement STOP
 
@@ -150,10 +151,10 @@ multi_statement:	statement
 			| multi_statement SEMICOLON statement
 
 expression:		term
-			| term expression_op term
+			| expression expression_op term
 
 term:			id_num
-			| id_num term_op id_num
+			| term term_op id_num
 
 id_num:			ident
 			| number
