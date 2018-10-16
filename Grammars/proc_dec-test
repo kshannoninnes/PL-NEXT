@@ -1,0 +1,38 @@
+PROGRAM
+    DECL::decone
+        CONST constone IS 42, consttwo IS 0, constthree IS 100;
+	VAR varone:identone, vartwo:identtwo, varthree:identten;
+	TYPE typeone => ARR arrone[0 TO 100] OF {enumone, enumtwo, enumthree};
+	PROC procone (formalone; formaltwo; formalthree)
+	FUNC funcone (formalfour; formalfive; formalsix)
+    DECLARATION END
+
+    IMPL::implone 
+	PROC proctwo;
+            functwo SET 42;
+            implpartidentone SET 42;
+        START
+            EXECUTE procthree;
+            IF 42 THEN
+                START
+                    DO
+                        FOR forone := 43 - 1 DO
+                            answertolife SET 42;
+                            answertouniverse SET 42;
+                            answertoeverything SET 42
+                        ROF;
+                        dosecondstatement SET 42;
+                        dothirdstatement SET 90
+                    WHILE 42 OD;
+                    ifsecondstatement SET 30;
+                    ifthirdstatement SET 31
+                STOP
+            FI;
+            WHILE 21 * 2 DO
+                EXECUTE proctwo;
+                EXECUTE procthree;
+                EXECUTE procfour
+            ELIHW
+        STOP
+    .
+TERMINATE

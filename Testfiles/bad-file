@@ -1,5 +1,0 @@
-START 
-	FOR helloWorld := 0 DO
-		EXECUTE myProcedureCall
-	ROF
-STOP

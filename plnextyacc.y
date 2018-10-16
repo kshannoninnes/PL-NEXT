@@ -24,7 +24,7 @@ int yyerror();
 %token TYPE VAR CONST ARR
 
  /* Control Structure Keywords */
-%token FOR ROF DO OD WHILE ELIHW IF THEN FI
+%token <s> FOR ROF DO OD WHILE ELIHW IF THEN FI
 
 /* Assignments */
 %token FOR_ASSIGN SET_ASSIGN IS
@@ -35,15 +35,15 @@ int yyerror();
 /* Unit Keywords */
 %token IMPL DECL DECLARATION END
 
-/* Punctuation */
-%token O_BRACE C_BRACE O_HBRACKET C_HBRACKET O_BRACKET C_BRACKET
-%token PERIOD COMMA COLON SEMICOLON GREATERTHAN EQUALS
+/* Key Punctuation */
+%token O_BRACE C_BRACE O_SBRACKET C_SBRACKET O_PAREN C_PAREN
+%token PERIOD COMMA COLON SEMICOLON GREATER_THAN EQUALS
 
 %start input
 
 %%
 
-input: 			basic_program { printf("Test success!\n"); }
+input: 			basic_program { printf("\n\nTest ended\n"); }
 
 basic_program: 		PROGRAM declaration_unit implementation_unit TERMINATE
 
@@ -74,9 +74,9 @@ procedure_interface:	PROC ident
 function_interface:	FUNC ident
 		  	| FUNC ident formal_parameters
 
-type_declaration:	TYPE ident EQUALS GREATERTHAN type SEMICOLON
+type_declaration:	TYPE ident EQUALS GREATER_THAN type SEMICOLON
 
-formal_parameters:	O_BRACKET multi_parameter C_BRACKET
+formal_parameters:	O_PAREN multi_parameter C_PAREN
 
 multi_parameter:	ident
 			| multi_parameter SEMICOLON ident
@@ -103,7 +103,7 @@ enumerated_type:	O_BRACE enum_element C_BRACE
 enum_element:		ident
 			| enum_element COMMA ident
 
-range_type:		O_HBRACKET range C_HBRACKET
+range_type:		O_SBRACKET range C_SBRACKET
 
 array_type:		ARR ident range_type OF type
 
@@ -143,7 +143,7 @@ while_statement:	WHILE expression DO multi_statement ELIHW
 
 do_statement:		DO multi_statement WHILE expression OD
 
-for_statement:		FOR ident COLON EQUALS expression DO multi_statement ROF
+for_statement:		FOR ident COLON EQUALS expression DO multi_statement ROF 
 
 compound_statement:	START multi_statement STOP
 

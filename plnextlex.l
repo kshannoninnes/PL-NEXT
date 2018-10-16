@@ -3,72 +3,67 @@
 %{
 #include <stdio.h>
 #include "plnextyacc.tab.h"
-void print();
 %}
 
  /* These are declared for clarity
     [a-zA-Z]+ isn't exactly intuitive */
 
 number			[0-9]+
-ident			[a-zA-Z]+
-whitespace		[ \t\n\r]+
+ident			[a-z]+
+whitespace              [ \t\n\r]+
 			
 %%
 
-"TERMINATE"		{ print(); printf("\n"); return TERMINATE; }
-"PROGRAM"		{ print(); return PROGRAM; }
-"END"			{ print(); return END; }
-"DECLARATION"		{ print(); return DECLARATION; }
-"DECL"			{ print(); return DECL; }
-"TYPE"			{ print(); return TYPE; }
-"OF"			{ print(); return OF; }
-"ARR"			{ print(); return ARR; }
-"IS"			{ print(); return IS; }
-"VAR"			{ print(); return VAR; }
-"CONST"			{ print(); return CONST; }
-"TO"			{ print(); return TO; }
-"IMPL"			{ print(); return IMPL; }
-"SET"			{ print(); return SET_ASSIGN; }
-"PROC"			{ print(); return PROC; }
-"FUNC"			{ print(); return FUNC; }
-"EXECUTE"		{ print(); return EXECUTE; }
-"FI"			{ print(); return FI; }
-"THEN"			{ print(); return THEN; }
-"IF"			{ print(); return IF; }
-"ELIHW"			{ print(); return ELIHW; }
-"OD"			{ print(); return OD; }
-"WHILE"			{ print(); return WHILE; }
-"ROF"			{ print(); return ROF; }
-"DO"			{ print(); return DO; }
-"FOR"			{ print(); return FOR; }
-"STOP"			{ print(); return STOP; }
-"START"			{ print(); return START; }
+"TERMINATE"		{ printf("TERMINATE"); return TERMINATE; }
+"PROGRAM"		{ printf("PROGRAM"); return PROGRAM; }
+"END"			{ printf("END"); return END; }
+"DECLARATION"		{ printf("DECLARATION"); return DECLARATION; }
+"DECL"			{ printf("DECL"); return DECL; }
+"TYPE"			{ printf("TYPE"); return TYPE; }
+"OF"			{ printf("OF"); return OF; }
+"ARR"			{ printf("ARR"); return ARR; }
+"IS"			{ printf("IS"); return IS; }
+"VAR"			{ printf("VAR"); return VAR; }
+"CONST"			{ printf("CONST"); return CONST; }
+"TO"			{ printf("TO"); return TO; }
+"IMPL"			{ printf("IMPL"); return IMPL; }
+"SET"			{ printf("SET"); return SET_ASSIGN; }
+"PROC"			{ printf("PROC"); return PROC; }
+"FUNC"			{ printf("FUNC"); return FUNC; }
+"EXECUTE"		{ printf("EXECUTE"); return EXECUTE; }
+"FI"			{ printf("FI"); return FI; }
+"THEN"			{ printf("THEN"); return THEN; }
+"IF"			{ printf("IF"); return IF; }
+"ELIHW"			{ printf("ELIHW"); return ELIHW; }
+"OD"			{ printf("OD"); return OD; }
+"WHILE"			{ printf("WHILE"); return WHILE; }
+"ROF"			{ printf("ROF"); return ROF; }
+"DO"			{ printf("DO"); return DO; }
+"FOR"			{ printf("FOR"); return FOR; }
+"STOP"			{ printf("STOP"); return STOP; }
+"START"			{ printf("START"); return START; }
 
-","			{ print(); return COMMA; }
-">"			{ print(); return GREATERTHAN; }
-"."			{ print(); return PERIOD; }
-":"			{ print(); return COLON; }
-"="			{ print(); return EQUALS; }
-";"			{ print(); return SEMICOLON; }
-"("			{ print(); return O_BRACKET; }
-")"			{ print(); return C_BRACKET; }
-"{"			{ print(); return O_BRACE; }
-"}"			{ print(); return C_BRACE; }
-"["			{ print(); return O_HBRACKET; }
-"]"			{ print(); return C_HBRACKET; }
+","			{ printf("COMMA"); return COMMA; }
+">"			{ printf("GREATER_THAN"); return GREATER_THAN; }
+"."			{ printf("PERIOD"); return PERIOD; }
+":"			{ printf("COLON"); return COLON; }
+"="			{ printf("EQUALS"); return EQUALS; }
+";"			{ printf("SEMICOLON"); return SEMICOLON; }
+"("			{ printf("O_PAREN"); return O_PAREN; }
+")"			{ printf("C_PAREN"); return C_PAREN; }
+"{"			{ printf("O_BRACE"); return O_BRACE; }
+"}"			{ printf("C_BRACE"); return C_BRACE; }
+"["			{ printf("O_SBRACKET"); return O_SBRACKET; }
+"]"			{ printf("C_SBRACKET"); return C_SBRACKET; }
 
-[+-]			{ print(); return expression_op; }
-[*/]			{ print(); return term_op; }
-{number}		{ print(); return number; }
-{ident}			{ print(); return ident; }
-{whitespace}		{ print(); }
+[+-]			{ printf("expression_op"); return expression_op; }
+[*/]			{ printf("term_op"); return term_op; }
+{number}		{ printf("number"); return number; }
+{ident}			{ printf("ident"); return ident; }
+{whitespace}            { printf("%s", yytext); }
+
 
 %%
-
-void print()
-{
-	printf("%s", yytext);
-}
 
 int main(void)
 {
@@ -83,6 +78,8 @@ int yywrap(void)
 
 void yyerror(char* s)
 {
-	fprintf(stderr, "%d %s\n", yylineno, s);
+        fflush(stdout);
+	fprintf(stderr, "\n\nnear line %d: %s", yylineno, s);
+        printf("\n");
 	exit(1);
 }
