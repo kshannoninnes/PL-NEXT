@@ -1,12 +1,12 @@
 %option yylineno
+%option noyywrap
 
 %{
 #include <stdio.h>
 #include "plnextyacc.tab.h"
 %}
 
- /* These are declared for clarity
-    [a-zA-Z]+ isn't exactly intuitive */
+ /* Regex Definitions */
 
 add_sub                 [+-]
 mul_div                 [*/]
@@ -15,6 +15,8 @@ ident			[a-z]+
 whitespace              [ \t\n\r]+
 			
 %%
+
+ /* Keywords */
 
 "TERMINATE"		{ printf("TERMINATE"); return TERMINATE; }
 "PROGRAM"		{ printf("PROGRAM"); return PROGRAM; }
@@ -45,6 +47,8 @@ whitespace              [ \t\n\r]+
 "STOP"			{ printf("STOP"); return STOP; }
 "START"			{ printf("START"); return START; }
 
+ /* Punctuation */
+
 ","			{ printf("COMMA"); return COMMA; }
 ">"			{ printf("GREATER_THAN"); return GREATER_THAN; }
 "."			{ printf("PERIOD"); return PERIOD; }
@@ -58,30 +62,27 @@ whitespace              [ \t\n\r]+
 "["			{ printf("O_SBRACKET"); return O_SBRACKET; }
 "]"			{ printf("C_SBRACKET"); return C_SBRACKET; }
 
+ /* Regex Tokens */
+
 {add_sub}		{ printf("expression_op"); return expression_op; }
 {mul_div}       	{ printf("term_op"); return term_op; }
 {number}		{ printf("number"); return number; }
 {ident}			{ printf("ident"); return ident; }
 {whitespace}            { printf("%s", yytext); }
 
-
 %%
+
+/* Function implementations */
 
 int main(void)
 {
-	yyparse();
-	return 0;
-}
-
-int yywrap(void)
-{
-	return 1;
+    yyparse();
+    return 0;
 }
 
 void yyerror(char* s)
 {
-        fflush(stdout);
-	fprintf(stderr, "\n\nnear line %d: %s", yylineno, s);
-        printf("\n");
-	exit(1);
+    fflush(stdout);
+    fprintf(stderr, "\n\nnear line %d: %s\n", yylineno, s);
+    exit(1);
 }

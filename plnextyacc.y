@@ -43,7 +43,7 @@ int yyerror();
 
 %%
 
-input: 			basic_program { printf("\n\nTest ended\n"); }
+input: 			basic_program { printf("\n\nTest ended"); }
 
 basic_program: 		PROGRAM declaration_unit implementation_unit TERMINATE
 
