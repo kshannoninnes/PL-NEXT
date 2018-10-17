@@ -8,6 +8,8 @@
  /* These are declared for clarity
     [a-zA-Z]+ isn't exactly intuitive */
 
+add_sub                 [+-]
+mul_div                 [*/]
 number			[0-9]+
 ident			[a-z]+
 whitespace              [ \t\n\r]+
@@ -56,8 +58,8 @@ whitespace              [ \t\n\r]+
 "["			{ printf("O_SBRACKET"); return O_SBRACKET; }
 "]"			{ printf("C_SBRACKET"); return C_SBRACKET; }
 
-[+-]			{ printf("expression_op"); return expression_op; }
-[*/]			{ printf("term_op"); return term_op; }
+{add_sub}		{ printf("expression_op"); return expression_op; }
+{mul_div}       	{ printf("term_op"); return term_op; }
 {number}		{ printf("number"); return number; }
 {ident}			{ printf("ident"); return ident; }
 {whitespace}            { printf("%s", yytext); }
