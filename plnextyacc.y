@@ -1,56 +1,50 @@
 %error-verbose
-%locations
 
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#define YYSTYPE char*
-int yywrap();
 int yylex();
 int yyerror();
 %}
 
-%union {
-	char *s;
-}
-
 /* Regular Expression Tokens */
 %token ident number term_op expression_op
 
- /* General Keywords */
-%token START STOP TO PROGRAM TERMINATE OF
-
-/* Type Keywords */
-%token TYPE VAR CONST ARR
-
- /* Control Structure Keywords */
-%token <s> FOR ROF DO OD WHILE ELIHW IF THEN FI
-
-/* Assignments */
-%token FOR_ASSIGN SET_ASSIGN IS
-
-/* Function Keywords */
-%token FUNC PROC EXECUTE
-
-/* Unit Keywords */
+ /* Keyword Tokens */
+%token PROGRAM TERMINATE
 %token IMPL DECL DECLARATION END
+%token TYPE VAR CONST ARR OF TO
+%token FUNC PROC EXECUTE
+%token FOR ROF DO OD WHILE ELIHW IF THEN FI
+%token FOR_ASSIGN SET_ASSIGN IS
+%token START STOP
 
-/* Key Punctuation */
+/* Punctuation Tokens */
 %token O_BRACE C_BRACE O_SBRACKET C_SBRACKET O_PAREN C_PAREN
 %token PERIOD COMMA COLON SEMICOLON GREATER_THAN EQUALS
 
-%start input
+%start basic_program
 
 %%
 
-input: 			basic_program { printf("\n\nTest ended"); }
+/*  Grammar Rules
+
+    These rules define what is and isn't a valid PL-NEXT source file.
+    If the text from the provided source file matches the basic_program
+    rule, it is considered a syntactically valid PL-NEXT source code file. */
 
 basic_program: 		PROGRAM declaration_unit implementation_unit TERMINATE
 
 declaration_unit:	DECL COLON COLON ident DECLARATION END
-			| DECL COLON COLON ident decl_options DECLARATION END
+			| DECL COLON COLON ident options DECLARATION END
 
-decl_options:		CONST constant_declaration
+options:                const_options
+                        | var_options
+                        | type_options
+                        | proc_options
+                        | function_interface
+
+const_options:		CONST constant_declaration
 	     		| CONST constant_declaration var_options
 			| CONST constant_declaration type_options
 			| CONST constant_declaration proc_options
@@ -74,12 +68,12 @@ procedure_interface:	PROC ident
 function_interface:	FUNC ident
 		  	| FUNC ident formal_parameters
 
-type_declaration:	TYPE ident EQUALS GREATER_THAN type SEMICOLON
-
 formal_parameters:	O_PAREN multi_parameter C_PAREN
 
 multi_parameter:	ident
 			| multi_parameter SEMICOLON ident
+
+type_declaration:	TYPE ident EQUALS GREATER_THAN type SEMICOLON
 
 constant_declaration:	constant SEMICOLON
 
@@ -158,5 +152,3 @@ term:			id_num
 
 id_num:			ident
 			| number
-
-%%

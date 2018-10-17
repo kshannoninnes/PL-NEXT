@@ -16,6 +16,13 @@ whitespace              [ \t\n\r]+
 			
 %%
 
+ /* Token Rules
+
+    These rules define the possible tokens for lex to parse. If text
+    in the provided source file matches any of these patterns, it's
+    parsed and sent to the linked yacc file for rule matching.
+  */
+
  /* Keywords */
 
 "TERMINATE"		{ printf("TERMINATE"); return TERMINATE; }
